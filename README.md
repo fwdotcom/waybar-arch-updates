@@ -29,6 +29,7 @@ Waybar does not provide a native module for displaying pending package updates. 
 waybar/scripts/waybar-arch-updates/
 ├── waybar-arch-updates.sh     # Bash script (Waybar exec)
 ├── waybar-arch-updates.css    # Module-specific styling
+├── setup-pacman-hook.sh       # Installs the pacman hook
 ├── LICENSE
 └── README.md
 ```
@@ -123,8 +124,12 @@ Right-clicking the module sends signal RTMIN+8 to Waybar, triggering an immediat
 To refresh Waybar automatically after a successful `pacman` transaction, add a `PostTransaction` hook:
 
 ```bash
-sudo mkdir -p /etc/pacman.d/hooks
-sudo tee /etc/pacman.d/hooks/95-waybar-arch-updates.hook >/dev/null <<'EOF'
+sudo ./setup-pacman-hook.sh
+```
+
+This installs `/etc/pacman.d/hooks/95-waybar-arch-updates.hook`:
+
+```ini
 [Trigger]
 Operation = Upgrade
 Operation = Install
@@ -135,14 +140,14 @@ Target = *
 [Action]
 Description = Refresh Waybar Arch updates module
 When = PostTransaction
-Exec = /usr/bin/pkill -RTMIN+8 -x waybar || true
-EOF
+Exec = /bin/sh -c 'pkill -RTMIN+8 waybar || true'
 ```
 
 How it works:
 
 - `When = PostTransaction` runs only after a successful transaction.
-- `pkill -RTMIN+8 -x waybar` triggers the same immediate Waybar refresh as the module right-click action.
+- `pkill -RTMIN+8 waybar` triggers the same immediate Waybar refresh as the module right-click action.
+- The command is wrapped in `/bin/sh -c '...'` because pacman hooks do not invoke a shell — `||` would otherwise be passed as a literal argument to `pkill`.
 - `|| true` prevents the hook from failing when Waybar is not running.
 
 Verify the hook file:

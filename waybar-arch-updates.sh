@@ -23,7 +23,7 @@ set -eo pipefail
 # Both variables are intentionally left empty (not unset) when there is nothing
 # to report, so the subsequent line-count logic can treat them uniformly.
 pacman_list=$(pacman -Qu 2>/dev/null || true)
-aur_list=$(command -v yay &>/dev/null && yay -Qua 2>/dev/null || true)
+aur_list=$(command -v yay &>/dev/null && timeout 15 yay -Qua 2>/dev/null || true)
 
 # --- Count updates ------------------------------------------------------------
 #
