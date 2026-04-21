@@ -1,0 +1,19 @@
+/* SPDX-License-Identifier: MIT
+ *
+ * waybar-arch-updates
+ * https://github.com/fwdotcom/waybar-arch-updates
+ * Frank Winter — https://www.frankwinter.com
+ *
+ * See README.md for usage, configuration and output format.
+ */
+
+/* Applied when the script emits "class": "has-updates".
+ * The high-opacity red background draws attention to pending package updates
+ * without requiring a separate icon — the bar entry itself becomes the signal. */
+widget > #custom-arch-updates.has-updates {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: #eee;
+}
+
+/* .up-to-date intentionally has no ruleset — no visual feedback is shown when
+ * the system is current. Add styles here to override that behaviour if needed. */
