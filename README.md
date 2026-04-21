@@ -118,6 +118,40 @@ Styling can be customized in `waybar-arch-updates.css`.
 
 Right-clicking the module sends signal RTMIN+8 to Waybar, triggering an immediate refresh without waiting for the 1-hour interval. Requires `"signal": 8` in the module configuration.
 
+### Auto Refresh After `pacman` Updates (Hook)
+
+To refresh Waybar automatically after a successful `pacman` transaction, add a `PostTransaction` hook:
+
+```bash
+sudo mkdir -p /etc/pacman.d/hooks
+sudo tee /etc/pacman.d/hooks/95-waybar-arch-updates.hook >/dev/null <<'EOF'
+[Trigger]
+Operation = Upgrade
+Operation = Install
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Refresh Waybar Arch updates module
+When = PostTransaction
+Exec = /usr/bin/pkill -RTMIN+8 -x waybar || true
+EOF
+```
+
+How it works:
+
+- `When = PostTransaction` runs only after a successful transaction.
+- `pkill -RTMIN+8 -x waybar` triggers the same immediate Waybar refresh as the module right-click action.
+- `|| true` prevents the hook from failing when Waybar is not running.
+
+Verify the hook file:
+
+```bash
+sudo pacman -Qkk pacman >/dev/null
+sudo cat /etc/pacman.d/hooks/95-waybar-arch-updates.hook
+```
+
 ---
 
 ## License
