@@ -10,6 +10,10 @@
 
 Waybar does not provide a native module for displaying pending package updates. This module fills that gap: it checks official repositories and optionally the AUR at a configurable interval, displays the number of available updates in the bar, and highlights the status visually.
 
+| Up to date | Updates available |
+|:---:|:---:|
+| ![System up to date](images/arch-up-to-date.png) | ![Updates available](images/arch-has-updates.png) |
+
 ---
 
 ## Prerequisites
